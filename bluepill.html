@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLUE PILL - Autoengaño</title>
+    <style>
+        /* CSS basado en la arquitectura de imagen_6.jpg */
+        html, body {
+            background-color: #000;
+            color: #ffffff;
+            font-family: monospace;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Bloquea el scroll manual */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Contenedor principal de las capas */
+        .scroll-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .text-layer {
+            position: absolute;
+            width: 100%;
+            padding: 2% 5%;
+            box-sizing: border-box;
+            word-break: break-all; /* Evita que el texto empuje hacia la derecha */
+            white-space: pre-wrap;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Capa Principal: Gris nítido (Como en imagen_4 e imagen_6) */
+        .base64-layer {
+            font-size: 10vw; 
+            line-height: 0.85;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: 2;
+        }
+
+        /* Capa Trasera: Más pequeña y transparente */
+        .english-layer {
+            font-size: 7vw;
+            line-height: 0.8;
+            color: rgba(255, 255, 255, 0.08);
+            z-index: 1;
+        }
+
+        /* Animación de scroll infinito suave */
+        .auto-scroll-base64 {
+            animation: scroll-loop 100s linear infinite;
+        }
+
+        .auto-scroll-slow {
+            animation: scroll-loop 150s linear infinite;
+        }
+
+        @keyframes scroll-loop {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); } 
+        }
+
+        /* Capa de la Consigna (Autoengaño) */
+        #reveal-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #coherent-text {
+            font-size: 2.5rem;
+            color: #fff;
+            text-align: center;
+            max-width: 80%;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body class="scroll-container">
+
+    <!-- Capa de fondo sutil -->
+    <div id="englishText" class="text-layer english-layer auto-scroll-slow"></div>
+
+    <!-- Capa principal nítida -->
+    <div id="base64Text" class="text-layer base64-layer auto-scroll-base64"></div>
+
+    <!-- Interfaz de revelación -->
+    <div id="reveal-layer">
+        <div id="coherent-text"></div>
+    </div>
+
+    <script>
+        const base64Layer = document.getElementById('base64Text');
+        const englishLayer = document.getElementById('englishText');
+        const coherentText = document.getElementById('coherent-text');
+        const revealLayer = document.getElementById('reveal-layer');
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        // Consigna con lógica de "autocorrección"
+        const sequence = [
+            "¿Y SI EL PROBLEMA SOY YO?",
+            "¿Y SI NO QUIERO CAMBIAR?",
+            "¿Y SI EL PROBLEMA SON ELLAS?",
+            "¿QUIERO ENTENDER ESTO?",
+            "¿QUIERO ENTENDER... TENER RAZÓN?",
+            "CADA CORRECCIÓN BUSCA SOSTENER UNA IDEA PREVIA.",
+            "EL AUTOENGAÑO ES ESTABILIDAD."
+        ];
+
+        // Función para llenar la pantalla con texto masivo
+        function fillTextLayer(element, length) {
+            let content = "";
+            for (let i = 0; i < length; i++) {
+                content += chars.charAt(Math.floor(Math.random() * chars.length));
+                // Espaciado aleatorio para imitar la estética de imagen_4
+                if (Math.random() > 0.85) content += " ";
+            }
+            // Duplicamos el contenido para que el loop del scroll sea imperceptible
+            element.innerText = content + "\n\n" + content;
+        }
+
+        // Inicializamos las capas con texto masivo
+        fillTextLayer(base64Layer, 5000);
+        fillTextLayer(englishLayer, 7000);
+
+        let sequenceIndex = 0;
+        let correctionInterval;
+
+        function updatePhrase() {
+            if (sequenceIndex < sequence.length) {
+                coherentText.innerText = sequence[sequenceIndex];
+                sequenceIndex++;
+            } else {
+                sequenceIndex = 0; 
+            }
+        }
+
+        // Eventos de interacción
+        window.onmousedown = () => {
+            revealLayer.style.opacity = "1";
+            sequenceIndex = 0;
+            updatePhrase();
+            correctionInterval = setInterval(updatePhrase, 1800);
+        };
+
+        window.onmouseup = () => {
+            revealLayer.style.opacity = "0";
+            clearInterval(correctionInterval);
+            setTimeout(() => { coherentText.innerText = ""; }, 400);
+        };
+
+        // Soporte para dispositivos móviles
+        window.ontouchstart = (e) => { e.preventDefault(); window.onmousedown(); };
+        window.ontouchend = () => window.onmouseup();
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+/* ============================================================
+   1. BASE & GLOBAL LAYOUT
+   ============================================================ */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden; /* Evita scroll por animaciones */
+}
+
+/* ============================================================
+   2. PANTALLA 1: WELCOME & TRANSICIÓN
+   ============================================================ */
+.welcome-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome-text {
+    font-weight: 300;
+    font-size: 1.5rem;
+    letter-spacing: 4px;
+    color: #000;
+    text-align: center;
+}
+
+.word-btn {
+    font-weight: 600;
+    color: #000;
+    text-decoration: underline;
+    display: inline-block;
+    min-width: 160px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.word-btn.expanding {
+    transform: scale(2.5);
+    opacity: 0;
+    letter-spacing: 15px;
+    pointer-events: none;
+}
+
+/* ============================================================
+   3. PANTALLA 2: SELECTION (INDEX)
+   ============================================================ */
+.main-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ethos-title {
+    position: absolute;
+    top: 8vh;
+    font-weight: 300;
+    font-size: 1.1rem;
+    letter-spacing: 6px;
+    text-transform: lowercase;
+    color: #333;
+}
+
+.pills-selection-container {
+    display: flex;
+    gap: 80px;
+    align-items: center;
+    justify-content: center;
+}
+
+.pill-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: float 4s ease-in-out infinite;
+}
+
+.img-wrapper {
+    width: 280px;
+    transition: transform 0.4s ease;
+}
+
+.img-wrapper img {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.08));
+}
+
+.pill-label {
+    margin-top: 20px;
+    color: #999;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Inclinaciones y Hovers de Píldoras */
+.blue .img-wrapper { transform: rotate(-15deg); }
+.red .img-wrapper { transform: rotate(0deg); }
+.black .img-wrapper { transform: rotate(15deg); }
+
+.pill-card:hover { transform: translateY(-20px); }
+.pill-card:hover .img-wrapper { transform: rotate(0deg) scale(1.15); }
+.pill-card:hover .pill-label { opacity: 1; }
+
+.pills-selection-container:hover .pill-card:not(:hover) {
+    opacity: 0.3;
+    filter: grayscale(0.8) blur(1px);
+}
+
+/* ============================================================
+   4. PANTALLA 3: BLUE PILL (ESTILO CASCADA CONSTANTE)
+   ============================================================ */
+
+/* Limpieza total para evitar desbordamiento derecho */
+.falling-char {
+    position: absolute;
+    width: 100vw; /* Ocupa todo el ancho */
+    left: 0;      /* Pegado a la izquierda */
+    text-align: center; /* Centra el contenido internamente */
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 900;
+    top: -120vh; 
+    animation: fall linear forwards;
+    white-space: pre;
+    line-height: 0.9;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+/* CAPA FRONTAL (La más nítida, gris claro) */
+.dense-char {
+    color: rgba(180, 180, 180, 0.5); /* Gris claro nítido */
+    font-size: 6rem; 
+    z-index: 2; /* Adelante */
+}
+
+/* CAPA TRASERA (Más transparente, gris oscuro) */
+.light-char {
+    color: rgba(60, 60, 60, 0.3); /* Gris oscuro transparente */
+    font-size: 4rem;
+    z-index: 1; /* Atrás */
+}
+
+/* Fondo negro absoluto */
+.cyber-body {
+    background-color: #000 !important;
+}
+
+@keyframes fall {
+    from { transform: translateY(0); }
+    to { transform: translateY(220vh); }
+}

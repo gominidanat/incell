@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>UNIVERSO INCEL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-text">
+            welcome to the 
+            <a href="index.html" id="changing-word" class="word-btn">pattern</a>
+        </div>
+    </div>
+
+    <script>
+        const words = ["pattern", "system", "loop"];
+        const wordElement = document.getElementById('changing-word');
+        let currentIndex = 1; // Empezamos en system ya que pattern está en el HTML
+
+        // Rotación rápida de la palabra
+        setInterval(() => {
+            wordElement.textContent = words[currentIndex];
+            currentIndex = (currentIndex + 1) % words.length;
+        }, 150);
+
+        // Animación de expansión al hacer clic
+        wordElement.addEventListener('click', function(e) {
+            e.preventDefault();
+            const destination = this.href;
+            
+            this.classList.add('expanding');
+            
+            setTimeout(() => {
+                window.location.href = destination;
+            }, 400); // Tiempo para que se vea la expansión
+        });
+    </script>
+</body>
+</html>
