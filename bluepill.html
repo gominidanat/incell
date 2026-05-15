@@ -3,170 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLUE PILL - Autoengaño</title>
+    <title>BLUE PILL - Notas de Autoengaño</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* CSS basado en la arquitectura de imagen_6.jpg */
         html, body {
-            background-color: #000;
-            color: #ffffff;
-            font-family: monospace;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Bloquea el scroll manual */
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* Contenedor principal de las capas */
-        .scroll-container {
-            position: relative;
             width: 100%;
             height: 100%;
-        }
-
-        .text-layer {
-            position: absolute;
-            width: 100%;
-            padding: 2% 5%;
-            box-sizing: border-box;
-            word-break: break-all; /* Evita que el texto empuje hacia la derecha */
-            white-space: pre-wrap;
-            cursor: pointer;
+            background-color: #ffffff !important;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-y: auto;
+            overflow-x: hidden;
             user-select: none;
+            scroll-behavior: smooth;
         }
 
-        /* Capa Principal: Gris nítido (Como en imagen_4 e imagen_6) */
-        .base64-layer {
-            font-size: 10vw; 
-            line-height: 0.85;
-            color: rgba(255, 255, 255, 0.4);
-            z-index: 2;
-        }
-
-        /* Capa Trasera: Más pequeña y transparente */
-        .english-layer {
-            font-size: 7vw;
-            line-height: 0.8;
-            color: rgba(255, 255, 255, 0.08);
-            z-index: 1;
-        }
-
-        /* Animación de scroll infinito suave */
-        .auto-scroll-base64 {
-            animation: scroll-loop 100s linear infinite;
-        }
-
-        .auto-scroll-slow {
-            animation: scroll-loop 150s linear infinite;
-        }
-
-        @keyframes scroll-loop {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-50%); } 
-        }
-
-        /* Capa de la Consigna (Autoengaño) */
-        #reveal-layer {
+        /* Capas de fondo retro */
+        .text-layer {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: 100;
+            top: 0; left: 0;
+            width: 110%; height: 200%;
+            padding: 2%;
+            box-sizing: border-box;
+            word-break: break-all;
+            white-space: pre-wrap;
+            font-weight: 900; 
+            text-transform: uppercase;
             pointer-events: none;
         }
 
-        #coherent-text {
-            font-size: 2.5rem;
+        .base64-layer {
+            font-size: 8vw; line-height: 0.8;
+            color: rgba(0, 0, 0, 0.08);
+            z-index: 1;
+            animation: cascade-fast 60s linear infinite;
+        }
+
+        .english-layer {
+            font-size: 5vw; line-height: 0.7;
+            color: rgba(0, 0, 0, 0.03); 
+            z-index: 0;
+            animation: cascade-slow 120s linear infinite;
+        }
+
+        @keyframes cascade-fast { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        @keyframes cascade-slow { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+
+        /* Contenedor estilo Block de Notas */
+        #central-column {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; 
+            padding: 10vh 5% 40vh 10%; 
+            min-height: 100vh;
+            /* Se quita pointer-events: none para permitir el clic final */
+        }
+
+        .question-line {
+            font-weight: bold;
+            font-size: 1.8rem;
+            color: #000;
+            text-align: left;
+            margin-bottom: 1.2rem;
+            line-height: 1.2;
+            width: 100%;
+            white-space: pre-wrap;
+            mix-blend-mode: multiply;
+        }
+
+        /* Cursor de escritura */
+        .question-line:last-child::after {
+            content: "|";
+            animation: blink 0.8s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Efecto Final */
+        .strikethrough {
+            text-decoration: line-through;
+            text-decoration-color: #ff0000;
+            text-decoration-thickness: 4px;
+            opacity: 0.8;
+        }
+
+        /* El botón final */
+        .red-reason-btn {
+            color: #ff0000;
+            font-weight: 900;
+            display: inline-block;
+            margin-left: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            border: 2px solid transparent;
+            padding: 0 5px;
+            transition: all 0.2s ease;
+            animation: popIn 0.3s ease-out forwards;
+            pointer-events: auto; /* Habilita el clic solo en este elemento */
+        }
+
+        .red-reason-btn:hover {
+            background-color: #ff0000;
             color: #fff;
-            text-align: center;
-            max-width: 80%;
-            line-height: 1.3;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
-<body class="scroll-container">
+<body class="blue-pill-body">
 
-    <!-- Capa de fondo sutil -->
-    <div id="englishText" class="text-layer english-layer auto-scroll-slow"></div>
+    <div id="englishText" class="text-layer english-layer"></div>
+    <div id="base64Text" class="text-layer base64-layer"></div>
 
-    <!-- Capa principal nítida -->
-    <div id="base64Text" class="text-layer base64-layer auto-scroll-base64"></div>
-
-    <!-- Interfaz de revelación -->
-    <div id="reveal-layer">
-        <div id="coherent-text"></div>
-    </div>
+    <div id="central-column"></div>
 
     <script>
-        const base64Layer = document.getElementById('base64Text');
-        const englishLayer = document.getElementById('englishText');
-        const coherentText = document.getElementById('coherent-text');
-        const revealLayer = document.getElementById('reveal-layer');
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-        // Consigna con lógica de "autocorrección"
-        const sequence = [
+        const column = document.getElementById('central-column');
+        
+        const phrases = [
+            "¿POR QUÉ LAS CHICAS NO ME QUIEREN?",
+            "¿SOY FEO?",
             "¿Y SI EL PROBLEMA SOY YO?",
             "¿Y SI NO QUIERO CAMBIAR?",
             "¿Y SI EL PROBLEMA SON ELLAS?",
-            "¿QUIERO ENTENDER ESTO?",
-            "¿QUIERO ENTENDER... TENER RAZÓN?",
-            "CADA CORRECCIÓN BUSCA SOSTENER UNA IDEA PREVIA.",
-            "EL AUTOENGAÑO ES ESTABILIDAD."
+            "CADA CORRECCIÓN BUSCA SOSTENER MI IDEA PREVIA.",
+            "EL AUTOENGAÑO ES ESTABILIDAD.",
+            "IT'S OVER.",
+            "QUIERO ENTENDER"
         ];
 
-        // Función para llenar la pantalla con texto masivo
-        function fillTextLayer(element, length) {
-            let content = "";
-            for (let i = 0; i < length; i++) {
-                content += chars.charAt(Math.floor(Math.random() * chars.length));
-                // Espaciado aleatorio para imitar la estética de imagen_4
-                if (Math.random() > 0.85) content += " ";
+        let isMouseDown = false;
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let currentElement = null;
+        let typingTimeout;
+        let isFinalPhase = false;
+
+        function type() {
+            if (!isMouseDown || isFinalPhase) return;
+
+            if (!currentElement || charIndex >= phrases[phraseIndex].length) {
+                if (phraseIndex === phrases.length - 1 && currentElement) {
+                    triggerFinalEffect();
+                    return;
+                }
+                if (currentElement) {
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                }
+                currentElement = document.createElement('div');
+                currentElement.className = 'question-line';
+                column.appendChild(currentElement);
+                charIndex = 0;
             }
-            // Duplicamos el contenido para que el loop del scroll sea imperceptible
-            element.innerText = content + "\n\n" + content;
+
+            const currentText = phrases[phraseIndex];
+            currentElement.textContent += currentText[charIndex];
+            charIndex++;
+
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            typingTimeout = setTimeout(type, 50);
         }
 
-        // Inicializamos las capas con texto masivo
-        fillTextLayer(base64Layer, 5000);
-        fillTextLayer(englishLayer, 7000);
-
-        let sequenceIndex = 0;
-        let correctionInterval;
-
-        function updatePhrase() {
-            if (sequenceIndex < sequence.length) {
-                coherentText.innerText = sequence[sequenceIndex];
-                sequenceIndex++;
-            } else {
-                sequenceIndex = 0; 
-            }
+        function triggerFinalEffect() {
+            isFinalPhase = true;
+            currentElement.innerHTML = 'QUIERO <span class="strikethrough">ENTENDER</span>';
+            
+            setTimeout(() => {
+                // Crear el enlace/botón
+                const btn = document.createElement('a');
+                btn.href = 'redpill.html'; // URL de destino
+                btn.className = 'red-reason-btn';
+                btn.innerText = 'TENER RAZÓN';
+                currentElement.appendChild(btn);
+                
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 800);
         }
 
-        // Eventos de interacción
-        window.onmousedown = () => {
-            revealLayer.style.opacity = "1";
-            sequenceIndex = 0;
-            updatePhrase();
-            correctionInterval = setInterval(updatePhrase, 1800);
+        const handleStart = (e) => {
+            if (e.target.className === 'red-reason-btn') return; // No interferir si ya es el botón
+            if (e.type === 'touchstart') e.preventDefault();
+            isMouseDown = true;
+            type();
         };
 
-        window.onmouseup = () => {
-            revealLayer.style.opacity = "0";
-            clearInterval(correctionInterval);
-            setTimeout(() => { coherentText.innerText = ""; }, 400);
+        const handleStop = () => {
+            isMouseDown = false;
+            clearTimeout(typingTimeout);
         };
 
-        // Soporte para dispositivos móviles
-        window.ontouchstart = (e) => { e.preventDefault(); window.onmousedown(); };
-        window.ontouchend = () => window.onmouseup();
+        window.addEventListener('mousedown', handleStart);
+        window.addEventListener('mouseup', handleStop);
+        window.addEventListener('touchstart', handleStart, {passive: false});
+        window.addEventListener('touchend', handleStop);
+
+        // Fondo
+        const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@&*";
+        function fill(el, l) {
+            let c = "";
+            for (let i = 0; i < l; i++) {
+                c += chars.charAt(Math.floor(Math.random() * chars.length));
+                if (Math.random() > 0.9) c += " ";
+            }
+            el.innerText = c + "\n\n" + c;
+        }
+        fill(document.getElementById('base64Text'), 5000);
+        fill(document.getElementById('englishText'), 7000);
     </script>
 </body>
 </html>
