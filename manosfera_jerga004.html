@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esfera 3D - Sistema Amor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            background-color: #e5e5e5;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Lora', serif;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Pantalla de inicio actualizada */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: #ffffff; /* Fondo blanco */
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .start-btn {
+            background: #f0f0f0; /* Gris suave */
+            border: 1px solid #d1d1d1;
+            color: #666666; /* Texto gris oscuro suave */
+            padding: 12px 35px;
+            font-family: 'Lora', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: lowercase;
+            letter-spacing: 0.15em;
+            border-radius: 50px; /* Bordes suaves/redondeados */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .start-btn:hover {
+            background: #e8e8e8;
+            color: #333333;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+            perspective: 2000px;
+            touch-action: none;
+            display: none; 
+            cursor: grab;
+        }
+
+        #container:active { cursor: grabbing; }
+
+        .word-node {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            user-select: none;
+            transform-origin: center center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s;
+        }
+
+        .word-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            background: rgba(0,0,0,0.05);
+        }
+
+        .word-text {
+            font-size: 3.5rem; 
+            line-height: 0.8;
+            letter-spacing: -0.05em;
+            color: #000000;
+            font-weight: 900; 
+            white-space: nowrap;
+        }
+
+        .can-scale:hover {
+            transform: scale(2.5) !important;
+            z-index: 999999 !important;
+            color: #ff0000 !important;
+        }
+
+        #ui-hint {
+            position: fixed;
+            bottom: 20px;
+            font-size: 0.85rem;
+            color: #333;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            pointer-events: none;
+            background: rgba(255,255,255,0.7);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-family: sans-serif;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <button class="start-btn" onclick="enterFullscreen()">manosfera</button>
+    </div>
+
+    <div id="ui-hint">Arrastra para rotar</div>
+    <div id="container"></div>
+
+    <script>
+        function enterFullscreen() {
+            const doc = document.documentElement;
+            // Intentar pantalla completa
+            if (doc.requestFullscreen) {
+                doc.requestFullscreen();
+            } else if (doc.webkitRequestFullscreen) {
+                doc.webkitRequestFullscreen();
+            } else if (doc.msRequestFullscreen) {
+                doc.msRequestFullscreen();
+            }
+
+            // Transición suave de salida
+            const overlay = document.getElementById('overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.getElementById('container').style.display = 'block';
+                document.getElementById('ui-hint').style.display = 'block';
+                init();
+            }, 800);
+        }
+
+        let camera, scene, group;
+        let targetRotationX = 0, targetRotationY = 0;
+        let currentRotationX = 0, currentRotationY = 0;
+        let isDragging = false;
+        let previousMouseX = 0, previousMouseY = 0;
+
+        const grammarTargets = [
+            "asignó", "encontrarme", "trabajaban", "llamaba", "tomé", "salimos", "hacer", "saliera", "hiciera", 
+            "condujera", "lograr", "resultó", "proveyó", "expresarme", "visité", "descubrí", "tenía", "había", 
+            "perdido", "salía", "hacía", "desagradó", "presentaron", "parecía", "sienten", "invitaba", "enfurecer", 
+            "verlo", "merodeando", "comiéndose", "usando", "estaba", "gorreándole", "daba", "llegué", "odiarlo", 
+            "escucharlo", "tener", "escuché", "clavando", "estuve", "logró", "perder", "recordó", "era", "odiaba", "dijo",
+            "semana", "compañía", "habitación", "vida", "interacción", "casa", "madre", "frecuencia", "furia", 
+            "hermana", "virginidad", "chicas", "comida", "bebidas", "vagina", "puerta", "edad", "actividades"
+        ];
+
+        const fullText = `Se me asignó un consejero nuevo con quien encontrarme cada semana en Santa Bárbara, ya que Karlin y Sasha ya no trabajaban para esa compañía. Mi nuevo consejero se llamaba Robert, un estudiante de la UCSB que era un año mayor que yo. Tomé café con él algunas veces, y dos veces salimos a hacer trabajos voluntarios juntos, en un esfuerzo para hacer que yo saliera de mi habitación e hiciera actividades. Nada que condujera a lograr la vida que yo deseaba resultó de esos encuentros... aunque la interacción social que él proveyó fue agradable, y me dio un medio por el cual expresarme a mí mismo. Visité la casa de mi madre con mucha frecuencia en otoño. Para mi extrema furia, descubrí que ahora mi hermana tenía novio, y que ya había perdido su virginidad. Ella "salía" casualmente con chicos en el pasado, pero nunca tan seriamente como lo hacía con este. Aquel sujeto mitad blanco / mitad mexicano se llamaba Samuel, e inmediatamente me desagradó intensamente cuando me lo presentaron por primera vez. Parecía como el típico guarro odioso hacia quien la mayoría de chicas jóvenes se sienten sexualmente atraídas. Georgia lo invitaba a casa de mi madre todo el tiempo, y me hacía enfurecer el verlo merodeando por ahí, comiéndose la comida y bebidas de mi madre, y usando la casa de ella. Ese sujeto estaba gorreándole a mi madre, y ella ni siquiera se daba cuenta. Con el tiempo llegué a odiarlo después de escucharlo tener sexo con mi hermana. Llegué a la casa un día mientras mi madre estaba en el trabajo, y escuché los sonidos de Samuel clavando su pene dentro de la vagina de mi hermana a través de la puerta cerrada de su habitación, además de los gemidos de ella. Estuve de pie allí, y lo escuché todo. Así que mi hermana, quien era cuatro años más joven que yo, logró perder mi virginidad antes que yo. Me recordó lo patético que yo era, que a la edad de 22 años, yo todavía era virgen. También odiaba a su novio.`;
+
+        function init() {
+            const container = document.getElementById('container');
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = 2200; 
+            scene = new THREE.Scene();
+            group = new THREE.Group();
+            scene.add(group);
+
+            const words = fullText.split(/\s+/).filter(w => w.length > 0);
+            const radius = 900; 
+
+            words.forEach((word, i) => {
+                const phi = Math.acos(-1 + (2 * i) / words.length);
+                const theta = Math.sqrt(words.length * Math.PI) * phi;
+
+                const node = document.createElement('div');
+                node.className = 'word-node';
+
+                const cleanWord = word.toLowerCase().replace(/[.,;:()"]/g, "");
+                if (grammarTargets.some(t => t.toLowerCase() === cleanWord)) {
+                    node.classList.add('can-scale');
+                }
+
+                const img = document.createElement('img');
+                img.className = 'word-image';
+                img.src = 'imagen.jpg';
+                img.onerror = () => img.style.display = 'none';
+
+                const span = document.createElement('span');
+                span.className = 'word-text';
+                span.textContent = word;
+
+                node.appendChild(img);
+                node.appendChild(span);
+
+                const object = new THREE.Object3D();
+                object.position.x = radius * Math.sin(phi) * Math.cos(theta);
+                object.position.y = radius * Math.sin(phi) * Math.sin(theta);
+                object.position.z = radius * Math.cos(phi);
+
+                object.userData.element = node;
+                container.appendChild(node);
+                group.add(object);
+            });
+
+            window.addEventListener('mousedown', (e) => { isDragging = true; previousMouseX = e.clientX; previousMouseY = e.clientY; });
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                targetRotationY += (e.clientX - previousMouseX) * 0.005;
+                targetRotationX += (e.clientY - previousMouseY) * 0.005;
+                previousMouseX = e.clientX; previousMouseY = e.clientY;
+            });
+            window.addEventListener('mouseup', () => isDragging = false);
+            
+            window.addEventListener('wheel', (e) => {
+                targetRotationY += e.deltaX * 0.001;
+                targetRotationX += e.deltaY * 0.001;
+            });
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            currentRotationY += (targetRotationY - currentRotationY) * 0.07;
+            currentRotationX += (targetRotationX - currentRotationX) * 0.07;
+            group.rotation.y = currentRotationY;
+            group.rotation.x = currentRotationX;
+
+            const widthHalf = window.innerWidth / 2;
+            const heightHalf = window.innerHeight / 2;
+
+            group.children.forEach(obj => {
+                const vector = new THREE.Vector3();
+                obj.getWorldPosition(vector);
+                vector.project(camera);
+
+                const x = (vector.x * widthHalf) + widthHalf;
+                const y = -(vector.y * heightHalf) + heightHalf;
+                const element = obj.userData.element;
+
+                if (vector.z < 1) {
+                    element.style.display = 'flex';
+                    element.style.left = x + 'px';
+                    element.style.top = y + 'px';
+                    
+                    const depthScale = (1.5 - vector.z) * 0.8;
+                    element.style.zIndex = Math.round((1 - vector.z) * 10000);
+                    
+                    if (!element.matches(':hover')) {
+                        element.style.transform = `translate(-50%, -50%) scale(${depthScale})`;
+                    }
+                } else {
+                    element.style.display = 'none';
+                }
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            if(camera) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+            }
+        });
+    </script>
+</body>
+</html>
