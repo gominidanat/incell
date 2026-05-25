@@ -20,7 +20,7 @@
             align-items: center;
         }
 
-        /* Pantalla de inicio actualizada */
+        /* Pantalla de inicio */
         #overlay {
             position: fixed;
             inset: 0;
@@ -139,7 +139,7 @@
                 doc.msRequestFullscreen();
             }
 
-            // Transición suave de salida
+            // Transición suave de salida para ocultar el overlay
             const overlay = document.getElementById('overlay');
             overlay.style.opacity = '0';
             setTimeout(() => {
@@ -155,18 +155,24 @@
         let currentRotationX = 0, currentRotationY = 0;
         let isDragging = false;
         let previousMouseX = 0, previousMouseY = 0;
+        let dragDistance = 0;
 
-        const grammarTargets = [
-            "asignó", "encontrarme", "trabajaban", "llamaba", "tomé", "salimos", "hacer", "saliera", "hiciera", 
-            "condujera", "lograr", "resultó", "proveyó", "expresarme", "visité", "descubrí", "tenía", "había", 
-            "perdido", "salía", "hacía", "desagradó", "presentaron", "parecía", "sienten", "invitaba", "enfurecer", 
-            "verlo", "merodeando", "comiéndose", "usando", "estaba", "gorreándole", "daba", "llegué", "odiarlo", 
-            "escucharlo", "tener", "escuché", "clavando", "estuve", "logró", "perder", "recordó", "era", "odiaba", "dijo",
-            "semana", "compañía", "habitación", "vida", "interacción", "casa", "madre", "frecuencia", "furia", 
-            "hermana", "virginidad", "chicas", "comida", "bebidas", "vagina", "puerta", "edad", "actividades"
-        ];
+        // Grupos de jerga modificados según la solicitud
 
-        const fullText = `Se me asignó un consejero nuevo con quien encontrarme cada semana en Santa Bárbara, ya que Karlin y Sasha ya no trabajaban para esa compañía. Mi nuevo consejero se llamaba Robert, un estudiante de la UCSB que era un año mayor que yo. Tomé café con él algunas veces, y dos veces salimos a hacer trabajos voluntarios juntos, en un esfuerzo para hacer que yo saliera de mi habitación e hiciera actividades. Nada que condujera a lograr la vida que yo deseaba resultó de esos encuentros... aunque la interacción social que él proveyó fue agradable, y me dio un medio por el cual expresarme a mí mismo. Visité la casa de mi madre con mucha frecuencia en otoño. Para mi extrema furia, descubrí que ahora mi hermana tenía novio, y que ya había perdido su virginidad. Ella "salía" casualmente con chicos en el pasado, pero nunca tan seriamente como lo hacía con este. Aquel sujeto mitad blanco / mitad mexicano se llamaba Samuel, e inmediatamente me desagradó intensamente cuando me lo presentaron por primera vez. Parecía como el típico guarro odioso hacia quien la mayoría de chicas jóvenes se sienten sexualmente atraídas. Georgia lo invitaba a casa de mi madre todo el tiempo, y me hacía enfurecer el verlo merodeando por ahí, comiéndose la comida y bebidas de mi madre, y usando la casa de ella. Ese sujeto estaba gorreándole a mi madre, y ella ni siquiera se daba cuenta. Con el tiempo llegué a odiarlo después de escucharlo tener sexo con mi hermana. Llegué a la casa un día mientras mi madre estaba en el trabajo, y escuché los sonidos de Samuel clavando su pene dentro de la vagina de mi hermana a través de la puerta cerrada de su habitación, además de los gemidos de ella. Estuve de pie allí, y lo escuché todo. Así que mi hermana, quien era cuatro años más joven que yo, logró perder mi virginidad antes que yo. Me recordó lo patético que yo era, que a la edad de 22 años, yo todavía era virgen. También odiaba a su novio.`;
+        // Blue Pill (Sin 'bluepill', con 'npc' y 'cope')
+        const bluePillTargets = ["personality", "normie", "cuck", "whiteknight", "orbiters", "simp", "soyboy", "npc", "cope"];
+        
+        // Red Pill (Sin 'redpill', con 'looksmaxxing', 'softmaxxing', 'hardmaxxing' y 'rating')
+        const redPillTargets = ["alpha", "hypergamy", "smv", "gynocentrism", "awalt", "chad", "looksmaxxing", "softmaxxing", "hardmaxxing", "rating"];
+        
+        // Black Pill (Sin 'blackpill', 'incel', 'looksmaxxing', 'moneymaxxing', 'gymmaxxing', 'mogged'; con 'mgtow', 'mra', truecel, ldar, doom, foid, copers, roping, er, over)
+        const blackPillTargets = ["subfive", "ldar", "doom", "foid", "copers", "truecel", "roping", "er", "over", "mgtow", "mra"];
+
+        // Lista combinada para aplicar la escala visual en el hover
+        const grammarTargets = [...bluePillTargets, ...redPillTargets, ...blackPillTargets];
+
+        // Texto adaptado con los términos clave integrados lógicamente
+        const fullText = `The manosphere is structured around complex beliefs explaining modern social dynamics. Some adhere to the bluepill philosophy, emphasizing personality and social norms, though critics dismiss them as a simple normie, a submissive cuck, a desperate simp, a submissive soyboy, a brainless npc, or a delusional whiteknight serving as passive orbiters who always cope with their reality. Others transition to the redpill perspective, seeking to become an alpha, analyzing hypergamy, focusing on high smv, studying the mechanics of gynocentrism, and accepting the doctrine of awalt as a reality of human behavior while trying to raise their rating, aspiring to live like a chad. They often try looksmaxxing through softmaxxing or even hardmaxxing to improve their status. However, blackpillers mock them as delusional copers who refuse to accept genetics. Finally, those who see no hope accept the blackpill, embracing the identity of an isolated truecel who views himself as a permanent subfive, choosing to ldar because they believe their absolute doom is sealed, sometimes leading to thoughts of roping, realizing that it's over, or even contemplating going er in a gynocentric world where a foid holds all the power, while others simply withdraw into mgtow or join mra groups.`;
 
         function init() {
             const container = document.getElementById('container');
@@ -187,8 +193,27 @@
                 node.className = 'word-node';
 
                 const cleanWord = word.toLowerCase().replace(/[.,;:()"]/g, "");
-                if (grammarTargets.some(t => t.toLowerCase() === cleanWord)) {
+                let targetUrl = null;
+
+                // Validación de grupo para asignación de URLs específicas
+                if (bluePillTargets.includes(cleanWord)) {
                     node.classList.add('can-scale');
+                    targetUrl = "bluepill.html";
+                } else if (redPillTargets.includes(cleanWord)) {
+                    node.classList.add('can-scale');
+                    targetUrl = "redpill.html";
+                } else if (blackPillTargets.includes(cleanWord)) {
+                    node.classList.add('can-scale');
+                    targetUrl = "blackpill.html";
+                }
+
+                // Configuración de eventos de redirección evitando falsos clics por arrastre
+                if (targetUrl) {
+                    node.style.cursor = 'pointer';
+                    node.addEventListener('click', (e) => {
+                        if (dragDistance > 15) return;
+                        window.open(targetUrl, '_blank');
+                    });
                 }
 
                 const img = document.createElement('img');
@@ -213,13 +238,29 @@
                 group.add(object);
             });
 
-            window.addEventListener('mousedown', (e) => { isDragging = true; previousMouseX = e.clientX; previousMouseY = e.clientY; });
+            // Captura de eventos para rotación de la esfera
+            window.addEventListener('mousedown', (e) => { 
+                isDragging = true; 
+                previousMouseX = e.clientX; 
+                previousMouseY = e.clientY; 
+                dragDistance = 0; // Reiniciar distancia acumulada
+            });
+
             window.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
-                targetRotationY += (e.clientX - previousMouseX) * 0.005;
-                targetRotationX += (e.clientY - previousMouseY) * 0.005;
-                previousMouseX = e.clientX; previousMouseY = e.clientY;
+                const deltaX = e.clientX - previousMouseX;
+                const deltaY = e.clientY - previousMouseY;
+                
+                targetRotationY += deltaX * 0.005;
+                targetRotationX += deltaY * 0.005;
+                
+                // Acumular la distancia de arrastre
+                dragDistance += Math.abs(deltaX) + Math.abs(deltaY);
+                
+                previousMouseX = e.clientX; 
+                previousMouseY = e.clientY;
             });
+
             window.addEventListener('mouseup', () => isDragging = false);
             
             window.addEventListener('wheel', (e) => {
