@@ -3,41 +3,457 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sección: RED PILL </title>
-    <link rel="stylesheet" href="style.css">
+    <title>Píldora Roja - Matriz de Automejoramiento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffffff; /* Blanco clínico puro */
+            color: #000000;
+            font-family: 'Lora', serif;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            letter-spacing: 0.12em; /* Interlineado espaciado como el sistema */
+        }
+
+        /* Contenedor de la cuadrícula permanente: 1/3 del área visible de la pantalla */
+        .grid-wrapper {
+            position: relative;
+            width: 380px;
+            height: 380px;
+            max-width: 90vw;
+            max-height: 90vw;
+            border: 1px solid #e5e5e5;
+            background: #000000; /* Fondo negro absoluto permanente */
+        }
+
+        /* Contenedor del desenlace que vive dentro del cuadrado negro */
+        .puzzle-underlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background-color: #000000;
+            color: #ffffff; /* Letras blancas */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            font-family: 'Lora', serif;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Activación interactiva de la pantalla de decisión dentro del cuadro */
+        .puzzle-underlay.active {
+            pointer-events: auto;
+            user-select: auto;
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 1px; /* Líneas divisorias extremadamente finas */
+            width: 100%;
+            height: 100%;
+            background-color: #000000; /* Rejilla negra */
+            position: relative;
+            z-index: 10;
+            transition: opacity 1s ease;
+        }
+
+        /* Celda de la cuadrícula */
+        .matrix-cell {
+            position: relative;
+            background-color: #fafafa;
+            cursor: pointer;
+            overflow: hidden;
+            transition: background-color 0.3s ease, opacity 0.4s ease;
+        }
+
+        .cell-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.2s ease, opacity 0.3s ease;
+            opacity: 0.85;
+        }
+
+        .matrix-cell:not(.locked):hover {
+            background-color: #f0f0f0;
+        }
+
+        .matrix-cell:not(.locked):hover .cell-image {
+            transform: scale(1.02);
+            opacity: 1;
+        }
+
+        /* Estado bloqueado temporal (mientras lee) */
+        .matrix-cell.locked .cell-image {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        /* Estado bloqueado y cerrado (desaparece por completado para revelar el fondo negro) */
+        .matrix-cell.locked-closed {
+            background-color: transparent !important;
+            pointer-events: none;
+        }
+
+        .matrix-cell.locked-closed .cell-image {
+            opacity: 0 !important;
+        }
+
+        /* Tarjeta informativa estilo Wikipedia minimalista y limpia */
+        .wiki-card {
+            position: absolute;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            padding: 24px;
+            width: 310px;
+            box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.05);
+            z-index: 5000;
+            font-family: 'Lora', serif;
+            font-size: 0.85rem;
+            display: none;
+            transition: opacity 0.2s ease;
+            letter-spacing: 0.08em;
+            text-transform: lowercase; /* Estilo estrictamente строчный */
+        }
+
+        .wiki-card h3 {
+            font-family: 'Lora', serif;
+            font-size: 1.15rem;
+            font-weight: 400;
+            margin-bottom: 12px;
+            color: #000000;
+            text-decoration: underline;
+            text-underline-offset: 5px; /* Subrayado idéntico al sistema */
+            text-decoration-thickness: 1px;
+            display: inline-block;
+        }
+
+        .wiki-desc {
+            margin-top: 8px;
+            line-height: 1.7;
+            color: #444444;
+        }
+
+        /* Botón de cerrar tipo Wikipedia (Forma de píldora) */
+        .wiki-close-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background-color: #ffffff;
+            color: #888888;
+            border: 1px solid #e5e5e5;
+            font-family: 'Lora', serif;
+            font-size: 0.75rem;
+            text-transform: lowercase;
+            letter-spacing: 0.12em;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 9999px; /* Forma de píldora */
+            transition: all 0.3s ease;
+        }
+
+        .wiki-close-btn:hover {
+            color: #000000;
+            border-color: #000000;
+            background-color: #fafafa;
+        }
+
+        /* Enlaces subrayados con estilo del sistema */
+        .system-underline {
+            text-decoration: underline;
+            text-underline-offset: 6px;
+            text-decoration-thickness: 1px;
+        }
+    </style>
 </head>
-<body class="pill-page [clase-especifica]">
-    <nav class="breadcrumb">
-        <a href="index.html">← Volver al inicio</a>
-    </nav>
+<body>
 
-    <article class="content-section">
-        <header class="section-hero">
-            <h1>La [Nombre de la Pill]</h1>
-            <div class="visual-placeholder">
-                <!-- Aquí iría tu arte, imagen surrealista o canvas -->
+    <!-- Envoltorio de la cuadrícula -->
+    <div class="grid-wrapper shadow-sm">
+        
+        <!-- Frase oculta en el fondo y botones de decisión final -->
+        <div id="underlay-container" class="puzzle-underlay opacity-0 transition-opacity duration-1000">
+            <h2 id="underlay-title" class="text-xs md:text-sm font-normal text-white mb-8 leading-relaxed tracking-widest lowercase min-h-[60px]">
+                <!-- El texto se auto-escribirá aquí de forma dinámica -->
+            </h2>
+            
+            <!-- Contenedor vertical de botones que se revelará suavemente al terminar la escritura -->
+            <div id="underlay-buttons" class="flex flex-col gap-3 w-full max-w-[240px] opacity-0 pointer-events-none transition-opacity duration-1000">
+                <!-- Botón de profundizar: neutro al inicio, rojo solo al hacer hover, forma de píldora -->
+                <button onclick="window.location.href='blackpill.html'" class="w-full py-2 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 border border-gray-800 rounded-full">
+                    sí, profundizar
+                </button>
+                <!-- Botón de retorno: idéntico diseño, hover estándar neutro, forma de píldora -->
+                <button onclick="window.location.href='manosfera.html'" class="w-full py-2 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:text-white hover:border-white transition-all duration-300 border border-gray-800 rounded-full">
+                    no, volver al inicio
+                </button>
             </div>
-        </header>
+        </div>
 
-        <section class="manifesto">
-            <h3>Conceptos Clave</h3>
-            <ul>
-                <li>Definición del término en la subcultura.</li>
-                <li>Impacto en la percepción de la realidad.</li>
-                <li>Análisis de la interacción social.</li>
-            </ul>
-        </section>
+        <div id="grid" class="matrix-grid">
+            <!-- Las 25 celdas se inyectan dinámicamente con JS -->
+        </div>
+    </div>
 
-        <section class="gallery">
-            <!-- Galería artística dedicada a esta píldora específica -->
-            <div class="art-item">
-                <p>Descripción artística de la pieza...</p>
-            </div>
-        </section>
-    </article>
+    <!-- Ficha Técnica Flotante (Wikipedia minimalista) -->
+    <div id="wiki-tooltip" class="wiki-card">
+        <div>
+            <h3 id="wiki-title">concepto</h3>
+        </div>
+        <p id="wiki-desc" class="wiki-desc">cargando base de datos...</p>
+        <button id="wiki-close" class="wiki-close-btn">cerrar</button>
+    </div>
 
-    <footer>
-        <p>Exploración de dinámicas sociales contemporáneas.</p>
-    </footer>
+    <script>
+        // Glosario con la jerga de la píldora roja
+        const redPillGlossary = [
+            { term: "Chad", desc: "El varón alfa arquetípico. Representa el estándar inalcanzable de selección biológica basado en simetría y genética." },
+            { term: "Stacy", desc: "Mujer hiper-atractiva situada en la cúspide de la valoración estética, inaccesible para el promedio masculino." },
+            { term: "Looksmaxxing", desc: "La filosofía y práctica de maximizar el atractivo físico propio mediante cualquier recurso estético o médico disponible." },
+            { term: "Softmaxxing", desc: "Modificaciones no invasivas: estilo de cabello, cuidado de la piel, vestimenta, postura y reducción de grasa corporal." },
+            { term: "Hardmaxxing", desc: "Alteración quirúrgica extrema (cirugías de mandíbula, implantes óseos) para forzar la masculinidad en el rostro." },
+            { term: "Rating", desc: "Clasificación numérica de la valía estética de un sujeto en una escala matemática fría del 1 al 10." },
+            { term: "Alpha", desc: "Líder de la jerarquía social. Individuo con altos recursos, carisma y rechazo total a la sumisión emocional." },
+            { term: "Beta", desc: "Varón utilizado por la estructura social para garantizar el sustento económico, desprovisto de atracción natural." },
+            { term: "Hypergamy", desc: "Impulso selectivo atribuido a la mujer para buscar exclusivamente al varón del estatus y valor más alto a su alcance." },
+            { term: "SMV", desc: "Sexual Market Value. El valor numérico objetivo que el entorno asigna a un cuerpo según su estética y recursos." },
+            { term: "Gynocentrism", desc: "La teoría de que el aparato social y judicial moderno está operando con el único fin de proteger el beneficio reproductivo femenino." },
+            { term: "AWALT", desc: "'All Women Are Like That'. Premisa que asume patrones hipergámicos inmutables y biológicos en toda mujer." },
+            { term: "Frame", desc: "Mantener el control de tu marco psicológico. No permitir que las pruebas emocionales de la pareja desestabilicen tus decisiones." },
+            { term: "Dread Game", desc: "Inducción sutil de la ansiedad por pérdida en la pareja mediante la estimulación de la competencia con otras mozas." },
+            { term: "Plate Theory", desc: "Estrategia que promueve mantener múltiples interacciones sexuales activas para no volverse dependiente de una sola persona." },
+            { term: "Game", desc: "Sistematización del flirteo y la comunicación como si se tratara de un algoritmo para burlar las barreras de atracción." },
+            { term: "Solipsism", desc: "La atribución de que el sexo opuesto interpreta el mundo basándose estrictamente en su estado de ánimo inmediato." },
+            { term: "Orbiters", desc: "Hombres que ofrecen validación constante a una mujer bajo la ilusión de recibir reciprocidad o intimidad en el futuro." },
+            { term: "White Knight", desc: "Hombres que defienden incondicionalmente intereses femeninos para ganar simpatía o aprobación sexual." },
+            { term: "Beta Riz", desc: "Habilidad para retener la atención de una pareja apoyándose puramente en la seguridad económica y la sumisión." },
+            { term: "Redpill Vibe", desc: "La frialdad intelectual adquirida tras comprender las leyes de selección sexual, destruyendo illusions sentimentales." },
+            { term: "SMV Peak", desc: "La ventana de tiempo óptima donde un cuerpo alcanza su máximo potencial estético e influencia dentro del mercado." },
+            { term: "Oneitis", desc: "Idealización obsesiva de una sola mujer. Considerada por la manosfera como una debilidad que destruye el estatus masculino." },
+            { term: "Bluepill Denial", desc: "Resistencia psicológica a aceptar la cruda realidad de las métricas de estatus para continuar en la comodidad social." },
+            { term: "Deconstruction", desc: "El traumático proceso de desmontar los ideales del romance tradicional para adoptar el pragmatismo absoluto." }
+        ];
+
+        // Rutas de tus 25 imágenes locales.
+        const imageUrls = Array.from({ length: 25 }, (_, i) => `imagen${i + 1}.jpg`);
+
+        // Generador de SVG clínicos temporales mientras subes tus imágenes reales
+        function getFallbackSVG(index) {
+            return `data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23fafafa"/><line x1="10" y1="50" x2="90" y2="50" stroke="%23cccccc" stroke-width="0.5"/><line x1="50" y1="10" x2="50" y2="90" stroke="%23cccccc" stroke-width="0.5"/><circle cx="50" cy="50" r="10" stroke="%23ff0000" stroke-width="0.5" fill="none" stroke-dasharray="2 2"/><text x="40" y="90" font-family="monospace" font-size="6" fill="%23999999">DATA_${index+1}</text></svg>`;
+        }
+
+        let lockedCount = 0;
+        let activeInterval = null;
+        let currentActiveCell = null;
+
+        const grid = document.getElementById('grid');
+        const tooltip = document.getElementById('wiki-tooltip');
+        const underlayContainer = document.getElementById('underlay-container');
+        const wikiClose = document.getElementById('wiki-close');
+
+        // Generar las 25 celdas
+        redPillGlossary.forEach((item, index) => {
+            const cell = document.createElement('div');
+            cell.className = 'matrix-cell';
+            cell.dataset.index = index;
+
+            const img = document.createElement('img');
+            img.className = 'cell-image';
+            img.src = imageUrls[index];
+            img.onerror = () => { img.src = getFallbackSVG(index); }; 
+            cell.appendChild(img);
+
+            // HOVER: Si no está bloqueada, inicia el cambio rápido aleatorio de imágenes
+            cell.addEventListener('mouseenter', () => {
+                if (cell.classList.contains('locked')) return;
+
+                activeInterval = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * 25);
+                    img.src = imageUrls[randomIndex];
+                    img.onerror = () => { img.src = getFallbackSVG(randomIndex); };
+                }, 100); 
+            });
+
+            // LEAVE HOVER: Si no se hizo click, vuelve a su imagen correspondiente
+            cell.addEventListener('mouseleave', () => {
+                if (cell.classList.contains('locked')) return;
+                clearInterval(activeInterval);
+                img.src = imageUrls[index];
+                img.onerror = () => { img.src = getFallbackSVG(index); };
+            });
+
+            // CLICK: Detiene el cambio, congela en su propia imagen de término y abre Wiki
+            cell.addEventListener('click', (e) => {
+                if (cell.classList.contains('locked')) return;
+
+                // NUEVA MECÁNICA: Si ya había una celda abierta previamente pero no cerrada, 
+                // primero la procesamos (hacemos desaparecer su imagen antes de bloquear la nueva)
+                if (currentActiveCell && currentActiveCell !== cell && !currentActiveCell.classList.contains('locked-closed')) {
+                    currentActiveCell.classList.add('locked-closed');
+                }
+
+                clearInterval(activeInterval);
+                cell.classList.add('locked');
+                currentActiveCell = cell;
+
+                img.src = imageUrls[index];
+                img.onerror = () => { img.src = getFallbackSVG(index); };
+
+                lockedCount++;
+                showWikiTooltip(e, item);
+            });
+
+            grid.appendChild(cell);
+        });
+
+        // Desplegar tooltip estilo Wikipedia (estrictamente строчный)
+        function showWikiTooltip(event, item) {
+            tooltip.style.display = 'block';
+            tooltip.style.opacity = '0';
+
+            document.getElementById('wiki-title').textContent = item.term.toLowerCase();
+            document.getElementById('wiki-desc').textContent = item.desc.toLowerCase();
+
+            const cellRect = event.currentTarget.getBoundingClientRect();
+            let left = cellRect.right + 12;
+            let top = cellRect.top;
+
+            if (left + 310 > window.innerWidth) {
+                left = cellRect.left - 325;
+                if (left < 10) left = 10; // Evitar desborde izquierdo en pantallas pequeñas
+            }
+            if (top + 240 > window.innerHeight) {
+                top = window.innerHeight - 260;
+            }
+
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+            
+            tooltip.offsetHeight; 
+            tooltip.style.opacity = '1';
+        }
+
+        // Script del efecto de máquina de escribir que soporta tags de HTML de forma segura
+        function typeWriterHTML(element, htmlString, speed, callback) {
+            element.innerHTML = "";
+            const tokens = [];
+            let currentToken = "";
+            let inTag = false;
+            
+            for (let char of htmlString) {
+                if (char === '<') {
+                    if (currentToken) {
+                        tokens.push({ type: 'text', value: currentToken });
+                        currentToken = "";
+                    }
+                    inTag = true;
+                    currentToken += char;
+                } else if (char === '>') {
+                    currentToken += char;
+                    tokens.push({ type: 'tag', value: currentToken });
+                    currentToken = "";
+                    inTag = false;
+                } else {
+                    currentToken += char;
+                }
+            }
+            if (currentToken) {
+                tokens.push({ type: 'text', value: currentToken });
+            }
+            
+            let tokenIndex = 0;
+            let charIndex = 0;
+            let currentHTML = "";
+            
+            function type() {
+                if (tokenIndex < tokens.length) {
+                    const token = tokens[tokenIndex];
+                    if (token.type === 'tag') {
+                        currentHTML += token.value;
+                        element.innerHTML = currentHTML;
+                        tokenIndex++;
+                        type(); // Pasar al siguiente token de inmediato si es un tag de cierre o apertura
+                    } else {
+                        if (charIndex < token.value.length) {
+                            currentHTML += token.value[charIndex];
+                            element.innerHTML = currentHTML;
+                            charIndex++;
+                            setTimeout(type, speed);
+                        } else {
+                            charIndex = 0;
+                            tokenIndex++;
+                            setTimeout(type, speed);
+                        }
+                    }
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        // Función para cerrar el tooltip, ocultar la imagen definitivamente y revelar el fondo
+        function closeWikiTooltip() {
+            if (tooltip.style.display === 'block') {
+                tooltip.style.opacity = '0';
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                }, 200);
+
+                // Ocultar la celda activa para que deje ver la frase debajo
+                if (currentActiveCell) {
+                    currentActiveCell.classList.add('locked-closed');
+                }
+
+                // Si se completaron todas, iniciar transición interna del cuadro negro
+                if (lockedCount === 25) {
+                    setTimeout(() => {
+                        // Ocultamos la rejilla con transición de opacidad
+                        grid.style.opacity = '0';
+                        grid.style.pointerEvents = 'none';
+
+                        // Revelamos el contenedor del desenlace
+                        underlayContainer.classList.remove('opacity-0');
+                        underlayContainer.classList.add('opacity-100', 'active');
+                        
+                        // Iniciamos la animación de escritura lenta y deliberada en el título oculto
+                        const titleEl = document.getElementById('underlay-title');
+                        const buttonsEl = document.getElementById('underlay-buttons');
+                        const phraseText = '¿deseas seguir sumergiéndote en la <span class="system-underline">verdad absoluta</span> o prefieres retirarte?';
+                        
+                        // Se aumentó el tiempo a 80ms por carácter para lograr tensión y estética typewriter
+                        typeWriterHTML(titleEl, phraseText, 80, () => {
+                            // Cuando la escritura termina, se revelan las píldoras de acción con un sutil fade-in largo
+                            buttonsEl.classList.remove('opacity-0', 'pointer-events-none');
+                            buttonsEl.classList.add('opacity-100');
+                        });
+                    }, 600);
+                }
+            }
+        }
+
+        // Cierre por botón "Cerrar"
+        wikiClose.addEventListener('click', closeWikiTooltip);
+
+        // Cierre por pulsación de la tecla Escape (Esc)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeWikiTooltip();
+            }
+        });
+    </script>
 </body>
 </html>
