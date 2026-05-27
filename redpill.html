@@ -22,13 +22,15 @@
             letter-spacing: 0.12em; /* Interlineado espaciado como el sistema */
         }
 
-        /* Contenedor de la cuadrícula permanente: 1/3 del área visible de la pantalla */
+        /* Contenedor de la cuadrícula dinámico con vmin para escalar proporcionalmente en pantallas grandes */
         .grid-wrapper {
             position: relative;
-            width: 380px;
-            height: 380px;
+            width: 60vmin;
+            height: 60vmin;
+            min-width: 320px;
+            min-height: 320px;
             max-width: 90vw;
-            max-height: 90vw;
+            max-height: 90vh;
             border: 1px solid #e5e5e5;
             background: #000000; /* Fondo negro absoluto permanente */
         }
@@ -45,7 +47,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 30px;
+            padding: 40px;
             font-family: 'Lora', serif;
             pointer-events: none;
             user-select: none;
@@ -177,30 +179,62 @@
             text-underline-offset: 6px;
             text-decoration-thickness: 1px;
         }
+
+        /* Media queries para adaptar la tipografía y botones del desenlace en pantallas grandes */
+        @media (min-width: 1200px) {
+            .puzzle-underlay h2 {
+                font-size: 1.05rem !important;
+                margin-bottom: 3rem !important;
+            }
+            .puzzle-underlay button {
+                font-size: 0.8rem !important;
+                padding-top: 0.8rem !important;
+                padding-bottom: 0.8rem !important;
+            }
+        }
+        @media (min-width: 1800px) {
+            .puzzle-underlay h2 {
+                font-size: 1.3rem !important;
+                margin-bottom: 4rem !important;
+            }
+            .puzzle-underlay button {
+                font-size: 0.95rem !important;
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- Envoltorio de la cuadrícula -->
     <div class="grid-wrapper shadow-sm">
         
+        <!-- Frase oculta en el fondo y botones de decisión final -->
         <div id="underlay-container" class="puzzle-underlay opacity-0 transition-opacity duration-1000">
-            <h2 id="underlay-title" class="text-xs md:text-sm font-normal text-white mb-8 leading-relaxed tracking-widest lowercase min-h-[60px]">
-                </h2>
+            <h2 id="underlay-title" class="text-xs md:text-sm font-normal text-white mb-8 leading-relaxed tracking-widest lowercase min-h-[80px]">
+                <!-- El texto se auto-escribirá aquí de forma dinámica -->
+            </h2>
             
-            <div id="underlay-buttons" class="flex flex-col gap-3 w-full max-w-[240px] opacity-0 pointer-events-none transition-opacity duration-1000">
-                <button onclick="window.location.href='blackpill.html'" class="w-full py-2 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 border border-gray-800 rounded-full">
+            <!-- Contenedor vertical de botones que se revelará suavemente al terminar la escritura -->
+            <div id="underlay-buttons" class="flex flex-col gap-3 w-full max-w-[280px] opacity-0 pointer-events-none transition-opacity duration-1000">
+                <!-- Botón de profundizar: neutro al inicio, rojo solo al hacer hover, forma de píldora -->
+                <button onclick="window.location.href='blackpill.html'" class="w-full py-2.5 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 border border-gray-800 rounded-full">
                     sí, profundizar
                 </button>
-                <button onclick="window.location.href='manosfera.html'" class="w-full py-2 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:text-white hover:border-white transition-all duration-300 border border-gray-800 rounded-full">
+                <!-- Botón de retorno: idéntico diseño, hover estándar neutro, forma de píldora -->
+                <button onclick="window.location.href='manosfera.html'" class="w-full py-2.5 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:text-white hover:border-white transition-all duration-300 border border-gray-800 rounded-full">
                     no, volver al inicio
                 </button>
             </div>
         </div>
 
         <div id="grid" class="matrix-grid">
-            </div>
+            <!-- Las 25 celdas se inyectan dinámicamente con JS -->
+        </div>
     </div>
 
+    <!-- Ficha Técnica Flotante (Wikipedia minimalista) -->
     <div id="wiki-tooltip" class="wiki-card">
         <div>
             <h3 id="wiki-title">concepto</h3>
@@ -210,7 +244,7 @@
     </div>
 
     <script>
-        // Глоссарий терминов
+        // Glosario con la jerga de la píldora roja
         const redPillGlossary = [
             { term: "Chad", desc: "El varón alfa arquetípico. Representa el estándar inalcanzable de selección biológica basado en simetría y genética." },
             { term: "Stacy", desc: "Mujer hiper-atractiva situada en la cúspide de la valoración estética, inaccesible para el promedio masculino." },
@@ -255,6 +289,7 @@
         const underlayContainer = document.getElementById('underlay-container');
         const wikiClose = document.getElementById('wiki-close');
 
+        // Generar las 25 celdas
         redPillGlossary.forEach((item, index) => {
             const cell = document.createElement('div');
             cell.className = 'matrix-cell';
@@ -266,8 +301,10 @@
             img.onerror = () => { img.src = getFallbackSVG(index); }; 
             cell.appendChild(img);
 
+            // HOVER: Si no está bloqueada, inicia el cambio rápido aleatorio de imágenes
             cell.addEventListener('mouseenter', () => {
                 if (cell.classList.contains('locked')) return;
+
                 activeInterval = setInterval(() => {
                     const randomIndex = Math.floor(Math.random() * 25);
                     img.src = imageUrls[randomIndex];
@@ -275,6 +312,7 @@
                 }, 100); 
             });
 
+            // LEAVE HOVER: Si no se hizo click, vuelve a su imagen correspondiente
             cell.addEventListener('mouseleave', () => {
                 if (cell.classList.contains('locked')) return;
                 clearInterval(activeInterval);
@@ -282,9 +320,12 @@
                 img.onerror = () => { img.src = getFallbackSVG(index); };
             });
 
+            // CLICK: Detiene el cambio, congela en su propia imagen de término y abre Wiki
             cell.addEventListener('click', (e) => {
                 if (cell.classList.contains('locked')) return;
 
+                // Si ya había una celda abierta previamente pero no cerrada, 
+                // primero la procesamos (hacemos desaparecer su imagen antes de bloquear la nueva)
                 if (currentActiveCell && currentActiveCell !== cell && !currentActiveCell.classList.contains('locked-closed')) {
                     currentActiveCell.classList.add('locked-closed');
                 }
@@ -303,6 +344,7 @@
             grid.appendChild(cell);
         });
 
+        // Desplegar tooltip estilo Wikipedia
         function showWikiTooltip(event, item) {
             tooltip.style.display = 'block';
             tooltip.style.opacity = '0';
@@ -329,6 +371,7 @@
             tooltip.style.opacity = '1';
         }
 
+        // Script del efecto de máquina de escribir que soporta tags de HTML de forma segura
         function typeWriterHTML(element, htmlString, speed, callback) {
             element.innerHTML = "";
             const tokens = [];
@@ -383,6 +426,7 @@
             type();
         }
 
+        // Función para cerrar el tooltip, ocultar la imagen definitivamente y revelar el fondo
         function closeWikiTooltip() {
             if (tooltip.style.display === 'block') {
                 tooltip.style.opacity = '0';
@@ -392,8 +436,11 @@
 
                 if (lockedCount === 25) {
                     setTimeout(() => {
+                        // Ocultamos la rejilla con transición de opacidad
                         grid.style.opacity = '0';
                         grid.style.pointerEvents = 'none';
+
+                        // Revelamos el contenedor del desenlace
                         underlayContainer.classList.remove('opacity-0');
                         underlayContainer.classList.add('opacity-100', 'active');
                         
@@ -401,6 +448,7 @@
                         const buttonsEl = document.getElementById('underlay-buttons');
                         const phraseText = '¿deseas seguir sumergiéndote en la <span class="system-underline">verdad absoluta</span> o prefieres retirarte?';
                         
+                        // Animación de escritura lenta y deliberada (80ms)
                         typeWriterHTML(titleEl, phraseText, 80, () => {
                             buttonsEl.classList.remove('opacity-0', 'pointer-events-none');
                             buttonsEl.classList.add('opacity-100');
@@ -410,9 +458,14 @@
             }
         }
 
+        // Cierre por botón "Cerrar"
         wikiClose.addEventListener('click', closeWikiTooltip);
+
+        // Cierre por pulsación de la tecla Escape (Esc)
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeWikiTooltip();
+            if (e.key === 'Escape') {
+                closeWikiTooltip();
+            }
         });
     </script>
 </body>
