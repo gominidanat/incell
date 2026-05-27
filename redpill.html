@@ -102,7 +102,7 @@
             transform: none !important;
         }
 
-        /* Estado bloqueado y cerrado (desaparece por completado para revelar el fondo negro) */
+        /* Estado bloqueado y cerrado (desaparece por completo para revelar el fondo negro) */
         .matrix-cell.locked-closed {
             background-color: transparent !important;
             pointer-events: none;
@@ -181,34 +181,26 @@
 </head>
 <body>
 
-    <!-- Envoltorio de la cuadrícula -->
     <div class="grid-wrapper shadow-sm">
         
-        <!-- Frase oculta en el fondo y botones de decisión final -->
         <div id="underlay-container" class="puzzle-underlay opacity-0 transition-opacity duration-1000">
             <h2 id="underlay-title" class="text-xs md:text-sm font-normal text-white mb-8 leading-relaxed tracking-widest lowercase min-h-[60px]">
-                <!-- El texto se auto-escribirá aquí de forma dinámica -->
-            </h2>
+                </h2>
             
-            <!-- Contenedor vertical de botones que se revelará suavemente al terminar la escritura -->
             <div id="underlay-buttons" class="flex flex-col gap-3 w-full max-w-[240px] opacity-0 pointer-events-none transition-opacity duration-1000">
-                <!-- Botón de profundizar: neutro al inicio, rojo solo al hacer hover, forma de píldora -->
                 <button onclick="window.location.href='blackpill.html'" class="w-full py-2 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 border border-gray-800 rounded-full">
                     sí, profundizar
                 </button>
-                <!-- Botón de retorno: idéntico diseño, hover estándar neutro, forma de píldora -->
-                <button onclick="window.location.href='home.html'" class="w-full py-2 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:text-white hover:border-white transition-all duration-300 border border-gray-800 rounded-full">
+                <button onclick="window.location.href='manosfera.html'" class="w-full py-2 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:text-white hover:border-white transition-all duration-300 border border-gray-800 rounded-full">
                     no, volver al inicio
                 </button>
             </div>
         </div>
 
         <div id="grid" class="matrix-grid">
-            <!-- Las 25 celdas se inyectan dinámicamente con JS -->
-        </div>
+            </div>
     </div>
 
-    <!-- Ficha Técnica Flotante (Wikipedia minimalista) -->
     <div id="wiki-tooltip" class="wiki-card">
         <div>
             <h3 id="wiki-title">concepto</h3>
@@ -218,7 +210,7 @@
     </div>
 
     <script>
-        // Glosario con la jerga de la píldora roja
+        // Глоссарий терминов
         const redPillGlossary = [
             { term: "Chad", desc: "El varón alfa arquetípico. Representa el estándar inalcanzable de selección biológica basado en simetría y genética." },
             { term: "Stacy", desc: "Mujer hiper-atractiva situada en la cúspide de la valoración estética, inaccesible para el promedio masculino." },
@@ -240,17 +232,16 @@
             { term: "Orbiters", desc: "Hombres que ofrecen validación constante a una mujer bajo la ilusión de recibir reciprocidad o intimidad en el futuro." },
             { term: "White Knight", desc: "Hombres que defienden incondicionalmente intereses femeninos para ganar simpatía o aprobación sexual." },
             { term: "Beta Riz", desc: "Habilidad para retener la atención de una pareja apoyándose puramente en la seguridad económica y la sumisión." },
-            { term: "Redpill Vibe", desc: "La frialdad intelectual adquirida tras comprender las leyes de selección sexual, destruyendo illusions sentimentales." },
+            { term: "Redpill Vibe", desc: "La frialdad intelectual adquirida tras comprender las leyes de selección sexual, destruyendo ilusiones sentimentales." },
             { term: "SMV Peak", desc: "La ventana de tiempo óptima donde un cuerpo alcanza su máximo potencial estético e influencia dentro del mercado." },
             { term: "Oneitis", desc: "Idealización obsesiva de una sola mujer. Considerada por la manosfera como una debilidad que destruye el estatus masculino." },
             { term: "Bluepill Denial", desc: "Resistencia psicológica a aceptar la cruda realidad de las métricas de estatus para continuar en la comodidad social." },
             { term: "Deconstruction", desc: "El traumático proceso de desmontar los ideales del romance tradicional para adoptar el pragmatismo absoluto." }
         ];
 
-        // Rutas de tus 25 imágenes locales.
-        const imageUrls = Array.from({ length: 25 }, (_, i) => `imagen${i + 1}.jpg`);
+        // ACTUALIZACIÓN DE RUTA: Se añade el prefijo FOTOS/ a cada imagen
+        const imageUrls = Array.from({ length: 25 }, (_, i) => `FOTOS/imagen${i + 1}.jpg`);
 
-        // Generador de SVG clínicos temporales mientras subes tus imágenes reales
         function getFallbackSVG(index) {
             return `data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23fafafa"/><line x1="10" y1="50" x2="90" y2="50" stroke="%23cccccc" stroke-width="0.5"/><line x1="50" y1="10" x2="50" y2="90" stroke="%23cccccc" stroke-width="0.5"/><circle cx="50" cy="50" r="10" stroke="%23ff0000" stroke-width="0.5" fill="none" stroke-dasharray="2 2"/><text x="40" y="90" font-family="monospace" font-size="6" fill="%23999999">DATA_${index+1}</text></svg>`;
         }
@@ -264,7 +255,6 @@
         const underlayContainer = document.getElementById('underlay-container');
         const wikiClose = document.getElementById('wiki-close');
 
-        // Generar las 25 celdas
         redPillGlossary.forEach((item, index) => {
             const cell = document.createElement('div');
             cell.className = 'matrix-cell';
@@ -276,10 +266,8 @@
             img.onerror = () => { img.src = getFallbackSVG(index); }; 
             cell.appendChild(img);
 
-            // HOVER: Si no está bloqueada, inicia el cambio rápido aleatorio de imágenes
             cell.addEventListener('mouseenter', () => {
                 if (cell.classList.contains('locked')) return;
-
                 activeInterval = setInterval(() => {
                     const randomIndex = Math.floor(Math.random() * 25);
                     img.src = imageUrls[randomIndex];
@@ -287,7 +275,6 @@
                 }, 100); 
             });
 
-            // LEAVE HOVER: Si no se hizo click, vuelve a su imagen correspondiente
             cell.addEventListener('mouseleave', () => {
                 if (cell.classList.contains('locked')) return;
                 clearInterval(activeInterval);
@@ -295,12 +282,9 @@
                 img.onerror = () => { img.src = getFallbackSVG(index); };
             });
 
-            // CLICK: Detiene el cambio, congela en su propia imagen de término y abre Wiki
             cell.addEventListener('click', (e) => {
                 if (cell.classList.contains('locked')) return;
 
-                // NUEVA MECÁNICA: Si ya había una celda abierta previamente pero no cerrada, 
-                // primero la procesamos (hacemos desaparecer su imagen antes de bloquear la nueva)
                 if (currentActiveCell && currentActiveCell !== cell && !currentActiveCell.classList.contains('locked-closed')) {
                     currentActiveCell.classList.add('locked-closed');
                 }
@@ -319,7 +303,6 @@
             grid.appendChild(cell);
         });
 
-        // Desplegar tooltip estilo Wikipedia (estrictamente строчный)
         function showWikiTooltip(event, item) {
             tooltip.style.display = 'block';
             tooltip.style.opacity = '0';
@@ -333,7 +316,7 @@
 
             if (left + 310 > window.innerWidth) {
                 left = cellRect.left - 325;
-                if (left < 10) left = 10; // Evitar desborde izquierdo en pantallas pequeñas
+                if (left < 10) left = 10;
             }
             if (top + 240 > window.innerHeight) {
                 top = window.innerHeight - 260;
@@ -346,7 +329,6 @@
             tooltip.style.opacity = '1';
         }
 
-        // Script del efecto de máquina de escribir que soporta tags de HTML de forma segura
         function typeWriterHTML(element, htmlString, speed, callback) {
             element.innerHTML = "";
             const tokens = [];
@@ -370,9 +352,7 @@
                     currentToken += char;
                 }
             }
-            if (currentToken) {
-                tokens.push({ type: 'text', value: currentToken });
-            }
+            if (currentToken) tokens.push({ type: 'text', value: currentToken });
             
             let tokenIndex = 0;
             let charIndex = 0;
@@ -385,7 +365,7 @@
                         currentHTML += token.value;
                         element.innerHTML = currentHTML;
                         tokenIndex++;
-                        type(); // Pasar al siguiente token de inmediato si es un tag de cierre o apertura
+                        type();
                     } else {
                         if (charIndex < token.value.length) {
                             currentHTML += token.value[charIndex];
@@ -398,45 +378,30 @@
                             setTimeout(type, speed);
                         }
                     }
-                } else if (callback) {
-                    callback();
-                }
+                } else if (callback) callback();
             }
             type();
         }
 
-        // Función para cerrar el tooltip, ocultar la imagen definitivamente y revelar el fondo
         function closeWikiTooltip() {
             if (tooltip.style.display === 'block') {
                 tooltip.style.opacity = '0';
-                setTimeout(() => {
-                    tooltip.style.display = 'none';
-                }, 200);
+                setTimeout(() => { tooltip.style.display = 'none'; }, 200);
 
-                // Ocultar la celda activa para que deje ver la frase debajo
-                if (currentActiveCell) {
-                    currentActiveCell.classList.add('locked-closed');
-                }
+                if (currentActiveCell) currentActiveCell.classList.add('locked-closed');
 
-                // Si se completaron todas, iniciar transición interna del cuadro negro
                 if (lockedCount === 25) {
                     setTimeout(() => {
-                        // Ocultamos la rejilla con transición de opacidad
                         grid.style.opacity = '0';
                         grid.style.pointerEvents = 'none';
-
-                        // Revelamos el contenedor del desenlace
                         underlayContainer.classList.remove('opacity-0');
                         underlayContainer.classList.add('opacity-100', 'active');
                         
-                        // Iniciamos la animación de escritura lenta y deliberada en el título oculto
                         const titleEl = document.getElementById('underlay-title');
                         const buttonsEl = document.getElementById('underlay-buttons');
                         const phraseText = '¿deseas seguir sumergiéndote en la <span class="system-underline">verdad absoluta</span> o prefieres retirarte?';
                         
-                        // Se aumentó el tiempo a 80ms por carácter para lograr tensión y estética typewriter
                         typeWriterHTML(titleEl, phraseText, 80, () => {
-                            // Cuando la escritura termina, se revelan las píldoras de acción con un sutil fade-in largo
                             buttonsEl.classList.remove('opacity-0', 'pointer-events-none');
                             buttonsEl.classList.add('opacity-100');
                         });
@@ -445,14 +410,9 @@
             }
         }
 
-        // Cierre por botón "Cerrar"
         wikiClose.addEventListener('click', closeWikiTooltip);
-
-        // Cierre por pulsación de la tecla Escape (Esc)
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeWikiTooltip();
-            }
+            if (e.key === 'Escape') closeWikiTooltip();
         });
     </script>
 </body>
