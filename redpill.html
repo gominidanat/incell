@@ -22,15 +22,15 @@
             letter-spacing: 0.12em; /* Interlineado espaciado como el sistema */
         }
 
-        /* Contenedor de la cuadrícula dinámico con vmin para escalar proporcionalmente en pantallas grandes */
+        /* Contenedor de la cuadrícula ampliado sustancialmente a 76vmin para mayor impacto visual */
         .grid-wrapper {
             position: relative;
-            width: 60vmin;
-            height: 60vmin;
+            width: 76vmin;
+            height: 76vmin;
             min-width: 320px;
             min-height: 320px;
-            max-width: 90vw;
-            max-height: 90vh;
+            max-width: 95vw;
+            max-height: 95vh;
             border: 1px solid #e5e5e5;
             background: #000000; /* Fondo negro absoluto permanente */
         }
@@ -128,7 +128,7 @@
             display: none;
             transition: opacity 0.2s ease;
             letter-spacing: 0.08em;
-            text-transform: lowercase; /* Estilo estrictamente строчный */
+            text-transform: lowercase; /* Estilo estrictamente strochny */
         }
 
         .wiki-card h3 {
@@ -448,7 +448,7 @@
                         const buttonsEl = document.getElementById('underlay-buttons');
                         const phraseText = '¿deseas seguir sumergiéndote en la <span class="system-underline">verdad absoluta</span> o prefieres retirarte?';
                         
-                        // Animación de escritura lenta y deliberada (80ms)
+                        // Animación de escritura lenta (80ms)
                         typeWriterHTML(titleEl, phraseText, 80, () => {
                             buttonsEl.classList.remove('opacity-0', 'pointer-events-none');
                             buttonsEl.classList.add('opacity-100');
