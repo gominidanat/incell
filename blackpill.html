@@ -3,41 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sección: BLACK PILL </title>
-    <link rel="stylesheet" href="style.css">
+    <title>Píldora Negra - El Vacío Absoluto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000; /* Negro absoluto permanente */
+            color: #ffffff;
+            font-family: 'Lora', serif;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            letter-spacing: 0.15em;
+            position: relative;
+        }
+
+        /* Эффект старого CRT монитора / сканирующих линий для атмосферы */
+        body::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            aspect-ratio: 16/9;
+            background-size: 100% 2px, 3px 100%;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* Контейнер инсталляции */
+        .installation-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 90vw;
+            max-width: 1200px;
+            height: 80vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Текстовые колонки по бокам */
+        .text-column {
+            width: 28%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            font-size: 0.75rem;
+            line-height: 1.8;
+            color: #444444;
+            transition: color 0.5s ease;
+            text-transform: lowercase;
+        }
+
+        /* Колонки активируются (становятся ярче) при наведении на плакат */
+        .installation-container:hover .text-column {
+            color: #a3a3a3;
+        }
+
+        /* Медленно ползущий текст манифеста (замедлен для удобства чтения) */
+        .scrolling-text {
+            position: absolute;
+            top: 100%;
+            width: 100%;
+            animation: scroll-up 85s linear infinite;
+        }
+
+        .scrolling-text.delay {
+            animation-delay: 6s;
+        }
+
+        /* Пропорциональный уход за экран с запасом под новые абзацы */
+        @keyframes scroll-up {
+            0% { top: 100%; }
+            100% { top: -340%; }
+        }
+
+        /* Стилизованный плакат MISSING в центре */
+        .poster-wrapper {
+            width: 100%;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.08);
+            border: 2px solid #000000;
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.6s ease;
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+            background-color: #d1d1d1; /* Цвет подложки под оригинальный тон постера */
+        }
+
+        .poster-wrapper:hover {
+            transform: scale(1.03) rotate(-0.5deg);
+            box-shadow: 0 0 70px rgba(255, 0, 0, 0.15);
+        }
+
+        /* Кнопка возврата в реальность */
+        .return-link {
+            position: absolute;
+            bottom: 24px;
+            font-size: 0.7rem;
+            color: #333333;
+            text-transform: lowercase;
+            letter-spacing: 0.2em;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            transition: color 0.3s ease;
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        .return-link:hover {
+            color: #ef4444; /* Красный цвет предупреждения при наведении */
+        }
+
+        /* Стили для ужасающих слов */
+        .highlight-word {
+            text-decoration: underline;
+            text-decoration-color: #b91c1c; /* Тонкое красное подчеркивание */
+            text-underline-offset: 4px;
+            text-decoration-thickness: 1px;
+            color: #ef4444; /* Слегка красноватый оттенок */
+        }
+    </style>
 </head>
-<body class="pill-page [clase-especifica]">
-    <nav class="breadcrumb">
-        <a href="index.html">← Volver al inicio</a>
-    </nav>
+<body>
 
-    <article class="content-section">
-        <header class="section-hero">
-            <h1>La [Nombre de la Pill]</h1>
-            <div class="visual-placeholder">
-                <!-- Aquí iría tu arte, imagen surrealista o canvas -->
+    <div class="installation-container">
+        
+        <!-- Columna de texto izquierda: el delirio de superioridad y rechazo -->
+        <div class="text-column">
+            <div class="scrolling-text">
+                <p class="mb-4 font-bold text-neutral-500 uppercase tracking-widest text-[0.62rem]">manifiesto_de_elliot_rodger</p>
+                
+                <!-- Справка о событии без лишних биографических деталей -->
+                <div class="mb-8 p-3 border border-neutral-900 bg-[#070707] text-[0.68rem] leading-relaxed text-neutral-500 normal-case rounded">
+                    <span class="font-bold text-red-700 uppercase tracking-wider text-[0.58rem] block mb-1">isla_vista_2014</span>
+                    elliot oliver robertson rodger (1991–2014). el 23 de mayo de 2014, en isla vista (california), el sujeto de 22 años asesinó a 6 personas e hirió a otras 14 antes de suicidarse. previo a la masacre, distribuyó su diario autobiográfico de 137 páginas ("my twisted world").
+                </div>
+                
+                <p class="mb-6">mírame. soy el <span class="highlight-word">caballero perfecto</span>, el espécimen supremo de la humanity. y sin embargo, vivo recluido en una soledad miserable que no he elegido.</p>
+                
+                <p class="mb-6">las mujeres son incapaces de ver mi valor. prefieren dar su afecto y sus cuerpos a <span class="highlight-word">hombres brutales y estúpidos</span> antes que a mí, que soy digno de adoración.</p>
+                
+                <p class="mb-6">he tenido que soportar ver a idiotas ordinarios disfrutar de los placeres del amor, mientras yo soy condonado a la <span class="highlight-word">insoportable humillación</span> del rechazo constante.</p>
+                
+                <p class="mb-6">no entiendo por qué la vida ha sido tan cruel conmigo. mi existencia se ha convertido en un <span class="highlight-word">bucle de dolor</span> silencioso, un desierto donde mi mente se deforma bajo el peso del desprecio.</p>
+                
+                <p class="mb-6">su desinterés ha sembrado en mí un <span class="highlight-word">odio negro y absoluto</span>. si no puedo tener el amor que merezco por las buenas, entonces el mundo entero pagará por mi sufrimiento.</p>
             </div>
-        </header>
+        </div>
 
-        <section class="manifesto">
-            <h3>Conceptos Clave</h3>
-            <ul>
-                <li>Definición del término en la subcultura.</li>
-                <li>Impacto en la percepción de la realidad.</li>
-                <li>Análisis de la interacción social.</li>
-            </ul>
-        </section>
-
-        <section class="gallery">
-            <!-- Galería artística dedicada a esta píldora específica -->
-            <div class="art-item">
-                <p>Descripción artística de la pieza...</p>
+        <!-- Центральный постер -->
+        <div class="flex flex-col items-center w-[38%] max-w-[400px] justify-center h-full">
+            <div class="poster-wrapper shadow-lg" onclick="triggerGlitch()">
+                <img 
+                    src="FOTOS/missing.jpg" 
+                    alt="Poster de Desaparición" 
+                    class="w-full h-auto block"
+                    onerror="this.src='https://placehold.co/400x510/cccccc/000000?text=MISSING'"
+                />
             </div>
-        </section>
-    </article>
+        </div>
 
-    <footer>
-        <p>Exploración de dinámicas sociales contemporáneas.</p>
-    </footer>
+        <!-- Columna de texto derecha: la venganza y el colapso final -->
+        <div class="text-column">
+            <div class="scrolling-text delay">
+                <p class="mb-6 font-bold text-neutral-500 uppercase tracking-widest text-[0.65rem]">my_twisted_world</p>
+                
+                <p class="mb-6">el día de la <span class="highlight-word">retribución</span> se acerca. entraré al campamento de la hermandad más popular y me aseguraré de que paguen por cada segundo de mi soledad.</p>
+                
+                <p class="mb-6">las <span class="highlight-word">masacraré a todas</span> en su propio hogar. veré el pánico en sus ojos cuando se den cuenta de que el hombre al que ignoraron ahora tiene el control absoluto.</p>
+                
+                <p class="mb-6">las castigaré por el crimen de privarme de sexo, afecto y validación. les demostraré que yo soy el <span class="highlight-word">verdadero dios</span> que dicta su destino.</p>
+                
+                <p class="mb-6">reduciré su estúpido orgullo a cenizas. no quedará nada de su arrogancia protectora cuando mi castigo caiga sobre ellas como una tormenta de metal.</p>
+                
+                <p class="mb-6 font-bold text-red-700 tracking-widest text-center mt-8">it is over.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Финальный концептуальный вопрос (Скрыт по умолчанию) -->
+    <div id="final-question-overlay" class="fixed inset-0 bg-black z-[10000] flex flex-col justify-center items-center opacity-0 pointer-events-none transition-opacity duration-1000">
+        <h2 id="final-question-text" class="text-xs md:text-sm font-normal text-white mb-10 leading-relaxed tracking-widest lowercase text-center max-w-[420px] min-h-[40px]">
+            <!-- Текст напишется здесь автоматически -->
+        </h2>
+        
+        <!-- Кнопки-таблетки принятия окончательного суждения -->
+        <div id="final-buttons" class="flex flex-col gap-3 w-full max-w-[280px] opacity-0 pointer-events-none transition-opacity duration-1000">
+            <!-- Кнопка Терроризм (Красная при наведении) -->
+            <button onclick="redirectToIndex()" class="w-full py-2.5 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:bg-[#ff0000] hover:text-white hover:border-[#ff0000] hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 border border-neutral-800 rounded-full">
+                terrorismo
+            </button>
+            <!-- Кнопка Ненависть (Нейтрально-белая при наведении) -->
+            <button onclick="redirectToIndex()" class="w-full py-2.5 bg-transparent text-gray-400 text-[0.7rem] tracking-widest lowercase hover:bg-white hover:text-black hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] transition-all duration-300 border border-neutral-800 rounded-full">
+                odio
+            </button>
+        </div>
+    </div>
+
+    <!-- Enlace discreto para cerrar -->
+    <a href="#" onclick="showFinalQuestion(event)" class="return-link">cerrar</a>
+
+    <script {isRunnable="true"}>
+        // Эффект визуального сбоя (glitch) при клике на постер
+        function triggerGlitch() {
+            const body = document.body;
+            let glitchCount = 0;
+            
+            const interval = setInterval(() => {
+                body.style.filter = `invert(${Math.random() > 0.85 ? 1 : 0}) contrast(${100 + Math.random() * 150}%)`;
+                glitchCount++;
+                
+                if (glitchCount > 12) {
+                    clearInterval(interval);
+                    body.style.filter = 'none';
+                }
+            }, 60);
+        }
+
+        // Анимация плавного перехода к концептуальному вопросу перед выходом
+        function showFinalQuestion(event) {
+            event.preventDefault();
+            
+            const overlay = document.getElementById('final-question-overlay');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100');
+
+            const textEl = document.getElementById('final-question-text');
+            const buttonsEl = document.getElementById('final-buttons');
+            const questionText = '¿es un acto de terrorismo u odio?'; 
+
+            // Медленный и вдумчивый эффект печати (80ms на букву)
+            let i = 0;
+            textEl.innerHTML = '';
+            function type() {
+                if (i < questionText.length) {
+                    textEl.innerHTML += questionText.charAt(i);
+                    i++;
+                    setTimeout(type, 80);
+                } else {
+                    // Плавное появление кнопок-таблеток выбора
+                    buttonsEl.classList.remove('opacity-0', 'pointer-events-none');
+                    buttonsEl.classList.add('opacity-100');
+                }
+            }
+            setTimeout(type, 500); // Небольшая задержка перед печатью для нагнетания
+        }
+
+        // Перенаправление на индексную страницу при выборе любого варианта
+        function redirectToIndex() {
+            window.location.href = 'index.html';
+        }
+    </script>
 </body>
 </html>
