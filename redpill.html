@@ -180,6 +180,45 @@
             text-decoration-thickness: 1px;
         }
 
+        @media (max-width: 768px) {
+
+    body {
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .grid-wrapper {
+        width: 75vw;
+        height: 95vw;
+        min-width: auto;
+        min-height: auto;
+    }
+
+    .wiki-card {
+        width: calc(100vw - 30px);
+        max-width: none;
+        left: 15px !important;
+        right: 15px !important;
+        top: 50% !important;
+        transform: translateY(-50%);
+        box-sizing: border-box;
+    }
+
+    .wiki-card h3 {
+        font-size: 1rem;
+    }
+
+    .wiki-desc {
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+
+    .wiki-close-btn {
+        font-size: 0.75rem;
+    }
+
+}
+
         /* Media queries para adaptar la tipografía y botones del desenlace en pantallas grandes */
         @media (min-width: 1200px) {
             .puzzle-underlay h2 {

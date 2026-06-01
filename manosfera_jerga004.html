@@ -116,6 +116,26 @@
             z-index: 1000;
             display: none;
         }
+        @media (max-width: 768px) {
+
+    .word-text {
+        font-size: 1.5rem;
+    }
+
+    .word-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .start-btn {
+        font-size: 0.9rem;
+        padding: 10px 25px;
+    }
+
+    #ui-hint {
+        font-size: 0.65rem;
+    }
+}
     </style>
 </head>
 <body>
@@ -177,13 +197,13 @@
         function init() {
             const container = document.getElementById('container');
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-            camera.position.z = 2200; 
+            camera.position.z = window.innerWidth < 768 ? 1200 : 2200;
             scene = new THREE.Scene();
             group = new THREE.Group();
             scene.add(group);
 
             const words = fullText.split(/\s+/).filter(w => w.length > 0);
-            const radius = 900; 
+            const radius = window.innerWidth < 768 ? 450 : 900;
 
             words.forEach((word, i) => {
                 const phi = Math.acos(-1 + (2 * i) / words.length);
