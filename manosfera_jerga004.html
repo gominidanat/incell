@@ -116,15 +116,30 @@
             z-index: 1000;
             display: none;
         }
+
+       @keyframes clue {
+    0%,100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 0.7;
+    }
+}
+
+
         @media (max-width: 768px) {
 
     .word-text {
-        font-size: 1.5rem;
+        font-size: 2.2rem;
+        line-height: 0.8;
     }
 
     .word-image {
-        width: 40px;
-        height: 40px;
+        width: 55px;
+        height: 55px;
     }
 
     .start-btn {
@@ -135,6 +150,12 @@
     #ui-hint {
         font-size: 0.65rem;
     }
+
+
+    .can-scale .word-text {
+        animation: clue 2s infinite;
+    }
+
 }
     </style>
 </head>
@@ -203,7 +224,7 @@
             scene.add(group);
 
             const words = fullText.split(/\s+/).filter(w => w.length > 0);
-            const radius = window.innerWidth < 768 ? 450 : 900;
+            const radius = window.innerWidth < 768 ? 550 : 900;
 
             words.forEach((word, i) => {
                 const phi = Math.acos(-1 + (2 * i) / words.length);
@@ -232,7 +253,7 @@
                     node.style.cursor = 'pointer';
                     node.addEventListener('click', (e) => {
                         if (dragDistance > 15) return;
-                        window.open(targetUrl, '_blank');
+                          window.location.href = targetUrl;
                     });
                 }
 
@@ -290,6 +311,34 @@
 
             animate();
         }
+
+        window.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    previousMouseX = e.touches[0].clientX;
+    previousMouseY = e.touches[0].clientY;
+    dragDistance = 0;
+}, { passive: false });
+
+window.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+
+    const deltaX = e.touches[0].clientX - previousMouseX;
+    const deltaY = e.touches[0].clientY - previousMouseY;
+
+    targetRotationY += deltaX * 0.005;
+    targetRotationX += deltaY * 0.005;
+
+    dragDistance += Math.abs(deltaX) + Math.abs(deltaY);
+
+    previousMouseX = e.touches[0].clientX;
+    previousMouseY = e.touches[0].clientY;
+
+    e.preventDefault();
+}, { passive: false });
+
+window.addEventListener('touchend', () => {
+    isDragging = false;
+});
 
         function animate() {
             requestAnimationFrame(animate);
