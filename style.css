@@ -252,4 +252,10 @@ body, html {
         font-size: 1.2rem;
         max-width: 95%;
     }
+
+       #central-column {
+        width: 100%;
+        padding: 8vh 5vw 30vh 5vw;
+        box-sizing: border-box;
+    }
 }
